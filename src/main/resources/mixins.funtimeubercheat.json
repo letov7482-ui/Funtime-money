@@ -2,9 +2,10 @@
   "required": true,
   "package": "com.axiom.funtime.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
   "client": [
-    "ChatMessageMixin"
+    "ChatMessageMixin",
+    "HandledScreenMixin",
+    "WorldRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
