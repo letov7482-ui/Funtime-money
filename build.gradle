@@ -15,8 +15,8 @@ dependencies {
     minecraft "com.mojang:minecraft:1.21.4"
     mappings "net.fabricmc:yarn:1.21.4+build.1:v2"
     modImplementation "net.fabricmc:fabric-loader:0.16.5"
-    // Реальная версия Fabric API для 1.21.4
-    modImplementation "net.fabricmc.fabric-api:fabric-api:0.100.0+1.21.4"
+    // Проверяем твою версию
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.110.5+1.21.4"
     modImplementation "com.terraformersmc:modmenu:11.0.0-beta.1"
     modApi("me.shedaniel.cloth:cloth-config-fabric:15.0.127") {
         exclude(group: "net.fabricmc.fabric-api")
