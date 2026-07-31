@@ -1,67 +1,86 @@
 package com.axiom.funtime.modules;
 
+import com.axiom.funtime.FunTimeMod;
 import com.axiom.funtime.utils.Pathfinder;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class AutoMiner {
     private static final MinecraftClient MC = MinecraftClient.getInstance();
-    private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-    private BlockPos currentTarget;
+    private static final Set<Block> VALUABLE = Set.of(
+        Blocks.ANCIENT_DEBRIS, Blocks.DIAMOND_ORE, Blocks.DEEPSLATE_DIAMOND_ORE,
+        Blocks.EMERALD_ORE, Blocks.DEEPSLATE_EMERALD_ORE,
+        Blocks.GOLD_ORE, Blocks.DEEPSLATE_GOLD_ORE,
+        Blocks.IRON_ORE, Blocks.DEEPSLATE_IRON_ORE,
+        Blocks.COAL_ORE, Blocks.DEEPSLATE_COAL_ORE,
+        Blocks.REDSTONE_ORE, Blocks.DEEPSLATE_REDSTONE_ORE,
+        Blocks.LAPIS_ORE, Blocks.DEEPSLATE_LAPIS_ORE,
+        Blocks.NETHER_QUARTZ_ORE
+    );
+    private final AtomicReference<BlockPos> target = new AtomicReference<>();
+    private final Deque<BlockPos> queue = new ConcurrentLinkedDeque<>();
     private boolean active = false;
 
     public void tick(MinecraftClient client) {
-        if (!active) return;
-        ClientPlayerEntity player = client.player;
-        if (player == null) return;
-
-        if (currentTarget == null) {
-            scanForOres();
-        } else if (isWithinReach(currentTarget, player)) {
-            breakBlock(currentTarget);
+        if (!active || client.player == null) return;
+        if (!FunTimeMod.humanSimulator.allowMining()) return;
+        BlockPos cur = target.get();
+        if (cur == null || (MC.world != null && MC.world.getBlockState(cur).isAir())) {
+            if (queue.isEmpty()) scanBlocks(client.player.getBlockPos());
+            if (!queue.isEmpty()) {
+                cur = queue.poll();
+                target.set(cur);
+            } else return;
+        }
+        if (isReachable(cur)) {
+            mineBlock(cur);
         } else {
-            Pathfinder.walkToAsync(currentTarget, () -> {});
+            Pathfinder.walkToAsync(cur, () -> {});
         }
     }
 
-    private void scanForOres() {
-        // simplified scan, real implementation uses chunk cache
+    private void scanBlocks(BlockPos center) {
         if (MC.world == null) return;
-        BlockPos playerPos = MC.player.getBlockPos();
-        int radius = com.axiom.funtime.FunTimeMod.CONFIG.minerRadius;
-        List<BlockPos> ores = BlockScanner.findValuableBlocks(playerPos, radius);
-        if (!ores.isEmpty()) {
-            currentTarget = ores.get(0);
+        List<BlockPos> found = new ArrayList<>();
+        int r = FunTimeMod.CONFIG.minerRadius;
+        for (int x = -r; x <= r; x++) {
+            for (int y = -r; y <= r; y++) {
+                for (int z = -r; z <= r; z++) {
+                    BlockPos pos = center.add(x, y, z);
+                    if (pos.getY() < MC.world.getBottomY() || pos.getY() > MC.world.getTopY()) continue;
+                    if (VALUABLE.contains(MC.world.getBlockState(pos).getBlock())) {
+                        found.add(pos);
+                    }
+                }
+            }
         }
+        found.sort(Comparator.comparingDouble(center::getSquaredDistance));
+        queue.clear();
+        queue.addAll(found);
     }
 
-    private boolean isWithinReach(BlockPos pos, ClientPlayerEntity player) {
-        Vec3d eye = player.getCameraPosVec(1.0f);
-        Vec3d center = Vec3d.ofCenter(pos);
-        return eye.distanceTo(center) <= 4.5;
+    private boolean isReachable(BlockPos pos) {
+        Vec3d eye = MC.player.getEyePos();
+        Vec3d block = Vec3d.ofCenter(pos);
+        return eye.distanceTo(block) <= 4.5;
     }
 
-    private void breakBlock(BlockPos pos) {
-        if (MC.interactionManager != null) {
-            MC.interactionManager.attackBlock(pos, net.minecraft.util.math.Direction.UP);
-            if (Math.random() < 0.3) MC.player.swingHand(Hand.MAIN_HAND);
-        }
+    private void mineBlock(BlockPos pos) {
+        if (MC.interactionManager == null) return;
+        MC.interactionManager.attackBlock(pos, Direction.UP);
+        if (Math.random() < 0.4) MC.player.swingHand(Hand.MAIN_HAND);
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
-        if (!active) currentTarget = null;
-    }
-}
-
-// placeholder utility
-class BlockScanner {
-    static List<BlockPos> findValuableBlocks(BlockPos center, int radius) {
-        return List.of(); // stub
+    public void setActive(boolean act) {
+        this.active = act;
+        if (!act) { target.set(null); queue.clear(); }
     }
 }
