@@ -1,9 +1,12 @@
 package com.axiom.funtime.modules;
 
 import com.axiom.funtime.FunTimeMod;
+import com.axiom.funtime.utils.MarketAnalyzer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
 import java.util.*;
 import java.util.concurrent.*;
@@ -26,9 +29,7 @@ public class AutoTrader {
 
     private void tick() {
         if (MC.player == null) return;
-        // открываем аукцион
         MC.player.networkHandler.sendChatCommand("ah");
-        // ждём открытия GUI (асинхронно)
         try { Thread.sleep(2000); } catch (InterruptedException ignored) {}
         if (MC.currentScreen instanceof HandledScreen<?> screen) {
             parseScreen(screen);
@@ -45,8 +46,8 @@ public class AutoTrader {
         for (int i = 0; i < screen.getScreenHandler().slots.size(); i++) {
             ItemStack stack = screen.getScreenHandler().getSlot(i).getStack();
             if (!stack.isEmpty()) {
-                // читаем название и цену из lore (упрощённо, ищем строку с ценой)
-                List<Text> lore = stack.getTooltip();
+                // 1.21.4: getTooltip требует параметры
+                List<Text> lore = stack.getTooltip(Item.TooltipContext.DEFAULT, MC.player, TooltipType.Default.BASIC);
                 int price = -1;
                 for (Text line : lore) {
                     Matcher m = PRICE_PATTERN.matcher(line.getString());
@@ -60,31 +61,23 @@ public class AutoTrader {
                 }
             }
         }
-        // ищем выгодные
         for (AuctionLot lot : currentLots) {
             double fair = MarketAnalyzer.getAveragePrice(lot.item);
             if (lot.price < fair * 0.7 && canAfford(lot.price)) {
-                // кликаем по слоту
                 MC.interactionManager.clickSlot(screen.getScreenHandler().syncId, lot.slot, 0, net.minecraft.screen.slot.SlotActionType.PICKUP, MC.player);
                 try { Thread.sleep(200); } catch (InterruptedException ignored) {}
-                // подтверждение покупки (зависит от сервера, часто просто второй клик или команда /ah buy)
                 MC.player.networkHandler.sendChatCommand("ah buy");
             }
         }
-        // кнопка следующей страницы (если есть)
-        // предположим, последний слот — "Next Page"
         int nextPageSlot = screen.getScreenHandler().slots.size() - 1;
         MC.interactionManager.clickSlot(screen.getScreenHandler().syncId, nextPageSlot, 0, net.minecraft.screen.slot.SlotActionType.PICKUP, MC.player);
     }
 
     private boolean canAfford(int price) {
-        // проверяем баланс через чат или счётчик (заглушка)
         return true;
     }
 
-    public void onChatMessage(Text message) {
-        // старый парсинг на случай, если GUI не открылся
-    }
+    public void onChatMessage(Text message) {}
 
     private static class AuctionLot {
         String item; int price; int slot;
