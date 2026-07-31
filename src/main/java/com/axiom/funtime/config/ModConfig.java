@@ -1,3 +1,4 @@
+// путь: src/main/java/com/axiom/funtime/config/ModConfig.java
 package com.axiom.funtime.config;
 
 import me.shedaniel.autoconfig.ConfigData;
@@ -16,9 +17,9 @@ public class ModConfig implements ConfigData {
     public long sniperMaxSpendPerItem = 100_000;
     public boolean inventoryManagerEnabled = true;
     public boolean humanSimulatorEnabled = true;
-
-    // Новые поля для автотрейдера
     public boolean autoTraderEnabled = true;
-    public double traderProfitThreshold = 0.3;   // насколько % дешевле рынка брать
-    public long traderMaxSpendPerItem = 100_000;  // макс цена покупки
+    public double traderProfitThreshold = 0.3;
+    public long traderMaxSpendPerItem = 100_000;
+    public boolean killAuraEnabled = true;
+    public boolean eventHelperEnabled = true;
 }
