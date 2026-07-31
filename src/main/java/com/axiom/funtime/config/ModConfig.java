@@ -16,4 +16,9 @@ public class ModConfig implements ConfigData {
     public long sniperMaxSpendPerItem = 100_000;
     public boolean inventoryManagerEnabled = true;
     public boolean humanSimulatorEnabled = true;
+
+    // Новые поля для автотрейдера
+    public boolean autoTraderEnabled = true;
+    public double traderProfitThreshold = 0.3;   // насколько % дешевле рынка брать
+    public long traderMaxSpendPerItem = 100_000;  // макс цена покупки
 }
