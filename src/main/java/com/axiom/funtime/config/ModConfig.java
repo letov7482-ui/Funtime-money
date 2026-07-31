@@ -1,4 +1,3 @@
-// путь: src/main/java/com/axiom/funtime/config/ModConfig.java
 package com.axiom.funtime.config;
 
 import me.shedaniel.autoconfig.ConfigData;
@@ -22,4 +21,11 @@ public class ModConfig implements ConfigData {
     public long traderMaxSpendPerItem = 100_000;
     public boolean killAuraEnabled = true;
     public boolean eventHelperEnabled = true;
+
+    // KillAura settings
+    public double killAuraHitboxSize = 2.0;         // множитель хитбокса (1.0 = стандартный)
+    public boolean killAuraSnap = true;             // мгновенный поворот к цели
+    public double killAuraMissChance = 0.15;        // шанс промаха (0.0 - 0.5)
+    public double killAuraFollowRange = 4.0;        // дистанция для преследования
+    public int killAuraKeybind = 71;                // код клавиши (по умолч. G)
 }
