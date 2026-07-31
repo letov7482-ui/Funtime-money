@@ -1,3 +1,4 @@
+// путь: src/main/java/com/axiom/funtime/FunTimeMod.java
 package com.axiom.funtime;
 
 import com.axiom.funtime.config.ModConfig;
@@ -61,11 +62,14 @@ public class FunTimeMod implements ModInitializer {
             if (CONFIG.sniperEnabled) sniper.tick(client);
         });
 
-        // Правильная сигнатура: (Text message, @Nullable MessageType type)
-        ClientReceiveMessageEvents.CHAT.register((message, type) -> {
-            if (CONFIG.autoTraderEnabled && autoTrader != null) {
-                autoTrader.onChatMessage(message);
+        // Исправленный обработчик чата с анонимным классом
+        ClientReceiveMessageEvents.CHAT.register(new ClientReceiveMessageEvents.ChatReceive() {
+            @Override
+            public void onReceiveMessage(net.minecraft.text.Text message, MessageType type) {
+                if (CONFIG.autoTraderEnabled && autoTrader != null) {
+                    autoTrader.onChatMessage(message);
+                }
             }
         });
     }
-                }
+            }
