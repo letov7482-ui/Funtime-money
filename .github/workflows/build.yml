@@ -1,4 +1,3 @@
-# .github/workflows/build.yml
 name: Build FunTime UberCheat
 
 on:
@@ -20,8 +19,10 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Setup Gradle
+      - name: Setup Gradle (совместимая версия)
         uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.7    # <-- фиксируем версию, совместимую с Loom 1.6
 
       - name: Build with Gradle
         run: gradle build
