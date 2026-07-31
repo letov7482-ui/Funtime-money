@@ -3,7 +3,7 @@
   "id": "funtimeubercheat",
   "version": "${version}",
   "name": "FunTime Uber Cheat",
-  "description": "Автоматизация для FunTime: шахта, продажи, снайпер аука. Mod Menu required.",
+  "description": "Автоматизация для FunTime: шахта, продажи, снайпер аука.",
   "authors": ["Axiom"],
   "contact": {},
   "license": "ARR",
@@ -12,7 +12,9 @@
     "main": ["com.axiom.funtime.FunTimeMod"],
     "modmenu": ["com.axiom.funtime.config.ModMenuIntegration"]
   },
-  "mixins": [],
+  "mixins": [
+    "mixins.funtimeubercheat.json"
+  ],
   "depends": {
     "fabricloader": ">=0.16.5",
     "fabric-api": "*",
