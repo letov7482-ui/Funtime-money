@@ -20,7 +20,7 @@ public class ModConfig implements ConfigData {
 
     public boolean sniperEnabled = true;
 
-    @ConfigEntry.BoundedContinuous(min = 0.1, max = 0.9)
+    @ConfigEntry.BoundedDouble(min = 0.1, max = 0.9)   // <-- правильная аннотация
     public double sniperProfitThreshold = 0.3;
 
     @ConfigEntry.BoundedDiscrete(min = 100, max = 10_000_000)
