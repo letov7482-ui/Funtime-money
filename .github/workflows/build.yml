@@ -19,10 +19,10 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Setup Gradle (совместимая версия)
+      - name: Setup Gradle (обновлённая версия)
         uses: gradle/actions/setup-gradle@v3
         with:
-          gradle-version: 8.7    # <-- фиксируем версию, совместимую с Loom 1.6
+          gradle-version: 8.10   # <-- теперь 8.10, совместимая с Loom 1.8.13
 
       - name: Build with Gradle
         run: gradle build
