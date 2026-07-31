@@ -43,17 +43,15 @@ public class FunTimeMod implements ModInitializer {
         autoTrader = new AutoTrader();
         if (CONFIG.autoTraderEnabled) autoTrader.start();
 
-        // Бинд для AutoMiner
+        // Бинды
         KeyBinding toggleMinerKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.funtimeubercheat.autominer", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_M,
                 "category.funtimeubercheat"));
-        // Бинд для KillAura
         killAuraKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.funtimeubercheat.killaura", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G,
                 "category.funtimeubercheat"));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            // Обработка клавиш
             while (toggleMinerKey.wasPressed()) {
                 CONFIG.autoMinerEnabled = !CONFIG.autoMinerEnabled;
                 AutoConfig.getConfigHolder(ModConfig.class).save();
@@ -73,6 +71,6 @@ public class FunTimeMod implements ModInitializer {
             if (CONFIG.killAuraEnabled) killAura.tick(client);
         });
 
-        LOG.info("FunTime UberCheat ready. Бинды: M - AutoMiner, G - KillAura");
+        LOG.info("FunTime UberCheat ready. Бинды: M-AutoMiner, G-KillAura");
     }
 }
