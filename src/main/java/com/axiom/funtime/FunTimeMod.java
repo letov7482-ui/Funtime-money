@@ -7,11 +7,9 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.network.message.MessageType;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,15 +59,5 @@ public class FunTimeMod implements ModInitializer {
             if (CONFIG.inventoryManagerEnabled) invManager.tick(client);
             if (CONFIG.sniperEnabled) sniper.tick(client);
         });
-
-        // Исправленный обработчик чата с анонимным классом
-        ClientReceiveMessageEvents.CHAT.register(new ClientReceiveMessageEvents.ChatReceive() {
-            @Override
-            public void onReceiveMessage(net.minecraft.text.Text message, MessageType type) {
-                if (CONFIG.autoTraderEnabled && autoTrader != null) {
-                    autoTrader.onChatMessage(message);
-                }
-            }
-        });
     }
-            }
+}
