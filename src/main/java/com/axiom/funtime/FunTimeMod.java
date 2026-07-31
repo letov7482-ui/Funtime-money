@@ -23,6 +23,8 @@ public class FunTimeMod implements ModInitializer {
     private InventoryManager invManager;
     private MarketSniper sniper;
     private AntiCheatEvasion antiCheat;
+    private KillAura killAura;
+    // EventHelper работает статически, не требует экземпляра
 
     @Override
     public void onInitialize() {
@@ -31,18 +33,18 @@ public class FunTimeMod implements ModInitializer {
         CONFIG = AutoConfig.getConfigHolder(ModConfig.class).getConfig();
 
         humanSimulator = new HumanSimulator();
-        humanSimulator.start();
+        if (CONFIG.humanSimulatorEnabled) humanSimulator.start();
 
         autoMiner = new AutoMiner();
         invManager = new InventoryManager();
         sniper = new MarketSniper();
         antiCheat = new AntiCheatEvasion();
+        killAura = new KillAura();
 
         autoTrader = new AutoTrader();
-        if (CONFIG.autoTraderEnabled) {
-            autoTrader.start();
-        }
+        if (CONFIG.autoTraderEnabled) autoTrader.start();
 
+        // Клавиша для AutoMiner
         KeyBinding toggleMinerKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.funtimeubercheat.autominer", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_M,
                 "category.funtimeubercheat"));
@@ -58,6 +60,7 @@ public class FunTimeMod implements ModInitializer {
             if (CONFIG.autoMinerEnabled) autoMiner.tick(client);
             if (CONFIG.inventoryManagerEnabled) invManager.tick(client);
             if (CONFIG.sniperEnabled) sniper.tick(client);
+            if (CONFIG.killAuraEnabled) killAura.tick(client);
         });
     }
 }
