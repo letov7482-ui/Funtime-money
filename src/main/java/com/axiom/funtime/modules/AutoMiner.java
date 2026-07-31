@@ -51,11 +51,13 @@ public class AutoMiner {
         if (MC.world == null) return;
         List<BlockPos> found = new ArrayList<>();
         int r = FunTimeMod.CONFIG.minerRadius;
+        int bottom = MC.world.getBottomY();
+        int top = MC.world.getHeight() - 1;
         for (int x = -r; x <= r; x++) {
             for (int y = -r; y <= r; y++) {
                 for (int z = -r; z <= r; z++) {
                     BlockPos pos = center.add(x, y, z);
-                    if (pos.getY() < MC.world.getBottomY() || pos.getY() > MC.world.getTopY()) continue;
+                    if (pos.getY() < bottom || pos.getY() > top) continue;
                     if (VALUABLE.contains(MC.world.getBlockState(pos).getBlock())) {
                         found.add(pos);
                     }
