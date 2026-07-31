@@ -1,5 +1,6 @@
 package com.axiom.funtime.modules;
 
+import com.axiom.funtime.FunTimeMod;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -11,11 +12,10 @@ import java.util.stream.Collectors;
 
 public class KillAura {
     private static final MinecraftClient MC = MinecraftClient.getInstance();
-    private boolean enabled = false;
     private long lastAttack = 0;
 
     public void tick(MinecraftClient client) {
-        if (!enabled || client.player == null) return;
+        if (!FunTimeMod.CONFIG.killAuraEnabled || client.player == null) return;
         List<Entity> entityList = new ArrayList<>();
         client.world.getEntities().forEach(entityList::add);
         Entity target = entityList.stream()
@@ -36,6 +36,4 @@ public class KillAura {
         client.player.swingHand(Hand.MAIN_HAND);
         lastAttack = now;
     }
-
-    public void setEnabled(boolean en) { this.enabled = en; }
 }
