@@ -5,7 +5,8 @@
   "client": [
     "ChatMessageMixin",
     "HandledScreenMixin",
-    "WorldRendererMixin"
+    "WorldRendererMixin",
+    "SilentAimMixin"
   ],
   "injectors": {
     "defaultRequire": 1
