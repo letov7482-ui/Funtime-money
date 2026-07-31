@@ -38,18 +38,15 @@ public class FunTimeMod implements ModInitializer {
         sniper = new MarketSniper();
         antiCheat = new AntiCheatEvasion();
 
-        // Инициализируем автотрейдер
         autoTrader = new AutoTrader();
         if (CONFIG.autoTraderEnabled) {
             autoTrader.start();
         }
 
-        // Клавиша для AutoMiner
         KeyBinding toggleMinerKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.funtimeubercheat.autominer", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_M,
                 "category.funtimeubercheat"));
 
-        // Тик игрового клиента
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (toggleMinerKey.wasPressed()) {
                 CONFIG.autoMinerEnabled = !CONFIG.autoMinerEnabled;
@@ -63,8 +60,8 @@ public class FunTimeMod implements ModInitializer {
             if (CONFIG.sniperEnabled) sniper.tick(client);
         });
 
-        // Обработка чата (для трейдера)
-        ClientReceiveMessageEvents.CHAT.register((message, signedMessage) -> {
+        // Исправленная обработка чата — только один параметр Text
+        ClientReceiveMessageEvents.CHAT.register(message -> {
             if (CONFIG.autoTraderEnabled && autoTrader != null) {
                 autoTrader.onChatMessage(message);
             }
