@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.network.message.MessageType;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,11 +61,11 @@ public class FunTimeMod implements ModInitializer {
             if (CONFIG.sniperEnabled) sniper.tick(client);
         });
 
-        // Исправленная обработка чата — только один параметр Text
-        ClientReceiveMessageEvents.CHAT.register(message -> {
+        // Правильная сигнатура: (Text message, @Nullable MessageType type)
+        ClientReceiveMessageEvents.CHAT.register((message, type) -> {
             if (CONFIG.autoTraderEnabled && autoTrader != null) {
                 autoTrader.onChatMessage(message);
             }
         });
     }
-}
+                }
