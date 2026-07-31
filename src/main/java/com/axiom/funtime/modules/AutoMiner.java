@@ -40,7 +40,6 @@ public class AutoMiner {
                 target.set(cur);
                 FunTimeMod.LOG.info("Новая цель: {}", cur);
             } else {
-                FunTimeMod.LOG.info("Рядом нет руды. Сканирую...");
                 return;
             }
         }
@@ -56,7 +55,7 @@ public class AutoMiner {
         List<BlockPos> found = new ArrayList<>();
         int r = FunTimeMod.CONFIG.minerRadius;
         int bottom = MC.world.getBottomY();
-        int top = MC.world.getDimension().height(); // правильный метод для 1.21
+        int top = MC.world.getHeight(); // правильная верхняя граница
         for (int x = -r; x <= r; x++) {
             for (int y = -r; y <= r; y++) {
                 for (int z = -r; z <= r; z++) {
