@@ -1,4 +1,3 @@
-// путь: src/main/java/com/axiom/funtime/FunTimeMod.java
 package com.axiom.funtime;
 
 import com.axiom.funtime.config.ModConfig;
@@ -24,7 +23,6 @@ public class FunTimeMod implements ModInitializer {
     private MarketSniper sniper;
     private AntiCheatEvasion antiCheat;
     private KillAura killAura;
-    // EventHelper работает статически, не требует экземпляра
 
     @Override
     public void onInitialize() {
@@ -42,9 +40,11 @@ public class FunTimeMod implements ModInitializer {
         killAura = new KillAura();
 
         autoTrader = new AutoTrader();
-        if (CONFIG.autoTraderEnabled) autoTrader.start();
+        // Начальное состояние из конфига
+        if (CONFIG.autoTraderEnabled) {
+            autoTrader.start();
+        }
 
-        // Клавиша для AutoMiner
         KeyBinding toggleMinerKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.funtimeubercheat.autominer", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_M,
                 "category.funtimeubercheat"));
@@ -57,10 +57,14 @@ public class FunTimeMod implements ModInitializer {
             }
             if (client.player == null) return;
             antiCheat.onTick();
+            // Проверяем и применяем флаги конфига каждый тик
+            autoTrader.updateState();       // ← теперь слушается переключатель
             if (CONFIG.autoMinerEnabled) autoMiner.tick(client);
             if (CONFIG.inventoryManagerEnabled) invManager.tick(client);
             if (CONFIG.sniperEnabled) sniper.tick(client);
             if (CONFIG.killAuraEnabled) killAura.tick(client);
         });
+
+        LOG.info("FunTime UberCheat ready. Все модули подчиняются конфигу.");
     }
-}
+    }
