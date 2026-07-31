@@ -22,10 +22,10 @@ public class ModConfig implements ConfigData {
     public boolean killAuraEnabled = true;
     public boolean eventHelperEnabled = true;
 
-    // KillAura settings
-    public double killAuraHitboxSize = 2.0;         // множитель хитбокса (1.0 = стандартный)
-    public boolean killAuraSnap = true;             // мгновенный поворот к цели
-    public double killAuraMissChance = 0.15;        // шанс промаха (0.0 - 0.5)
-    public double killAuraFollowRange = 4.0;        // дистанция для преследования
-    public int killAuraKeybind = 71;                // код клавиши (по умолч. G)
+    // KillAura настройки
+    public double killAuraHitboxSize = 1.2;
+    public boolean killAuraSnap = false;
+    public double killAuraMissChance = 0.1;
+    public double killAuraFollowRange = 3.5;
+    public boolean killAuraAntiNPC = true;
 }
