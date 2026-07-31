@@ -23,6 +23,7 @@ public class FunTimeMod implements ModInitializer {
     private MarketSniper sniper;
     private AntiCheatEvasion antiCheat;
     private KillAura killAura;
+    private KeyBinding killAuraKey;
 
     @Override
     public void onInitialize() {
@@ -40,31 +41,38 @@ public class FunTimeMod implements ModInitializer {
         killAura = new KillAura();
 
         autoTrader = new AutoTrader();
-        // Начальное состояние из конфига
-        if (CONFIG.autoTraderEnabled) {
-            autoTrader.start();
-        }
+        if (CONFIG.autoTraderEnabled) autoTrader.start();
 
+        // Бинд для AutoMiner
         KeyBinding toggleMinerKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.funtimeubercheat.autominer", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_M,
                 "category.funtimeubercheat"));
+        // Бинд для KillAura
+        killAuraKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.funtimeubercheat.killaura", InputUtil.Type.KEYSYM, GLFW.GLFW_KEY_G,
+                "category.funtimeubercheat"));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            // Обработка клавиш
             while (toggleMinerKey.wasPressed()) {
                 CONFIG.autoMinerEnabled = !CONFIG.autoMinerEnabled;
                 AutoConfig.getConfigHolder(ModConfig.class).save();
                 LOG.info("AutoMiner: {}", CONFIG.autoMinerEnabled ? "ON" : "OFF");
             }
+            while (killAuraKey.wasPressed()) {
+                CONFIG.killAuraEnabled = !CONFIG.killAuraEnabled;
+                AutoConfig.getConfigHolder(ModConfig.class).save();
+                LOG.info("KillAura: {}", CONFIG.killAuraEnabled ? "ON" : "OFF");
+            }
             if (client.player == null) return;
             antiCheat.onTick();
-            // Проверяем и применяем флаги конфига каждый тик
-            autoTrader.updateState();       // ← теперь слушается переключатель
+            autoTrader.updateState();
             if (CONFIG.autoMinerEnabled) autoMiner.tick(client);
             if (CONFIG.inventoryManagerEnabled) invManager.tick(client);
             if (CONFIG.sniperEnabled) sniper.tick(client);
             if (CONFIG.killAuraEnabled) killAura.tick(client);
         });
 
-        LOG.info("FunTime UberCheat ready. Все модули подчиняются конфигу.");
+        LOG.info("FunTime UberCheat ready. Бинды: M - AutoMiner, G - KillAura");
     }
-    }
+}
